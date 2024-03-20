@@ -1,0 +1,34 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import wordnet
+
+def morphological_analysis(text):
+    tokens = word_tokenize(text)  # Tokenize the input text into words
+    for token in tokens:
+        print("Word:", token)
+        # Perform stemming
+        stemmer = nltk.stem.PorterStemmer()
+        stem = stemmer.stem(token)
+        print("Stem:", stem)
+        
+        # Perform lemmatization
+        lemmatizer = nltk.stem.WordNetLemmatizer()
+        lemma = lemmatizer.lemmatize(token)
+        print("Lemma:", lemma)
+        
+        # Perform part-of-speech tagging
+        pos_tags = nltk.pos_tag([token])
+        print("Part-of-speech tags:", pos_tags)
+        
+        # Synonyms using WordNet
+        synsets = wordnet.synsets(token)
+        synonyms = set()
+        for synset in synsets:
+            for lemma in synset.lemmas():
+                synonyms.add(lemma.name())
+        print("Synonyms:", synonyms)
+        
+        print("="*50)
+
+def main():
+    text = "The quick brown foxes are jumping over the laz

@@ -1,0 +1,55 @@
+import nltk
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+def preprocess_text(text):
+    # Tokenize the text into sentences
+    sentences = nltk.sent_tokenize(text)
+    return sentences
+
+def calculate_sentence_embeddings(sentences):
+    # Initialize a CountVectorizer to convert sentences to vectors
+    vectorizer = CountVectorizer(stop_words='english')
+    
+    # Fit the vectorizer and transform the sentences into vectors
+    sentence_vectors = vectorizer.fit_transform(sentences)
+    
+    # Convert the sparse matrix to a dense array
+    sentence_embeddings = sentence_vectors.toarray()
+    
+    return sentence_embeddings
+
+def calculate_coherence(sentence_embeddings):
+    # Calculate cosine similarity between all pairs of sentence embeddings
+    similarities = cosine_similarity(sentence_embeddings)
+    
+    # Calculate average pairwise similarity as coherence score
+    coherence_score = np.mean(similarities)
+    
+    return coherence_score
+
+def evaluate_coherence(text):
+    # Preprocess the text into sentences
+    sentences = preprocess_text(text)
+    
+    # Calculate sentence embeddings
+    sentence_embeddings = calculate_sentence_embeddings(sentences)
+    
+    # Calculate coherence score
+    coherence_score = calculate_coherence(sentence_embeddings)
+    
+    return coherence_score
+
+# Example text
+text = """
+Natural language processing (NLP) is a subfield of linguistics, computer science, information engineering, and artificial intelligence concerned with the interactions between computers and human (natural) languages, in particular how to program computers to process and analyze large amounts of natural language data.
+The field of NLP involves making computers understand, interpret, and generate human language in a valuable way. 
+NLP algorithms enable computers to perform tasks such as speech recognition, natural language understanding, and natural language generation.
+"""
+
+# Evaluate coherence of the text
+coherence_score = evaluate_coherence(text)
+
+# Print the coherence score
+print("Coherence Score:", coherence_score)

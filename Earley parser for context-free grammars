@@ -1,0 +1,87 @@
+class EarleyParser:
+    def __init__(self, grammar, start_symbol):
+        self.grammar = grammar
+        self.start_symbol = start_symbol
+
+    def predict(self, state, chart):
+        next_symbol = state.next_symbol()
+        if next_symbol in self.grammar:
+            for production in self.grammar[next_symbol]:
+                chart.append(State(next_symbol, production, 0, state.start))
+
+    def scan(self, state, chart, token):
+        if state.next_symbol() == token:
+            chart.append(State(state.symbol, state.production, state.dot + 1, state.start))
+
+    def complete(self, state, chart):
+        for other_state in chart[state.start]:
+            next_symbol = other_state.next_symbol()
+            if next_symbol == state.symbol and other_state.dot < len(other_state.production) - 1:
+                chart.append(State(other_state.symbol, other_state.production, other_state.dot + 1, other_state.start))
+
+    def parse(self, tokens):
+        start_state = State(self.start_symbol, ['S'], 0, 0)
+        chart = [[] for _ in range(len(tokens) + 1)]
+        chart[0].append(start_state)
+
+        for i in range(len(tokens) + 1):
+            for state in chart[i]:
+                if not state.completed():
+                    if state.next_symbol() in self.grammar:
+                        self.predict(state, chart)
+                    elif i < len(tokens):
+                        self.scan(state, chart, tokens[i])
+                else:
+                    self.complete(state, chart)
+
+        for state in chart[len(tokens)]:
+            if state.symbol == self.start_symbol and state.completed():
+                return True
+        return False
+
+class State:
+    def __init__(self, symbol, production, dot, start):
+        self.symbol = symbol
+        self.production = production
+        self.dot = dot
+        self.start = start
+
+    def next_symbol(self):
+        if self.dot < len(self.production):
+            return self.production[self.dot]
+        else:
+            return None
+
+    def completed(self):
+        return self.dot == len(self.production)
+
+def main():
+    # Define a grammar
+    grammar = {
+        'S': [['NP', 'VP']],
+        'NP': [['N'], ['Det', 'N']],
+        'VP': [['V'], ['V', 'NP']],
+        'N': ['man', 'ball', 'woman', 'table'],
+        'Det': ['the', 'a'],
+        'V': ['hit', 'took', 'saw', 'liked']
+    }
+
+    # Create an Earley parser
+    earley_parser = EarleyParser(grammar, 'S')
+
+    # Test sentences
+    sentences = [
+        ['the', 'man', 'hit', 'the', 'table'],
+        ['the', 'man', 'hit', 'a', 'ball'],
+        ['a', 'woman', 'liked', 'the', 'table']
+    ]
+
+    # Parse each sentence
+    for sentence in sentences:
+        if earley_parser.parse(sentence):
+            print("Parsing successful:", ' '.join(sentence))
+        else:
+            print("Parsing failed:", ' '.join(sentence))
+
+if __name__ == "__main__":
+    main()

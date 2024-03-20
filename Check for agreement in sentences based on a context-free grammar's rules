@@ -1,0 +1,61 @@
+class AgreementChecker:
+    def __init__(self, grammar):
+        self.grammar = grammar
+
+    def check_agreement(self, sentence):
+        tokens = sentence.split()
+        for token in tokens:
+            if token in self.grammar:
+                return self.check_token_agreement(token, tokens)
+
+    def check_token_agreement(self, token, tokens):
+        production_rules = self.grammar[token]
+        for rule in production_rules:
+            if self.rule_matches_tokens(rule, tokens):
+                return True
+        return False
+
+    def rule_matches_tokens(self, rule, tokens):
+        rule_tokens = rule.split()
+        if len(rule_tokens) != len(tokens):
+            return False
+        for i in range(len(rule_tokens)):
+            if rule_tokens[i][0].isupper():
+                if tokens[i] not in self.grammar[rule_tokens[i]]:
+                    return False
+            elif rule_tokens[i] != tokens[i]:
+                return False
+        return True
+
+def main():
+    # Define a simple context-free grammar for subject-verb agreement
+    grammar = {
+        'S': ['NP VP'],
+        'NP': ['the cat', 'the dog', 'cats', 'dogs'],
+        'VP': ['chases', 'chase']
+    }
+
+    # Create an AgreementChecker object
+    agreement_checker = AgreementChecker(grammar)
+
+    # Test sentences
+    sentences = [
+        "the cat chases",
+        "the cat chase",
+        "cats chases",
+        "cats chase",
+        "the dog chase",
+        "the dog chases",
+        "dogs chase",
+        "dogs chases"
+    ]
+
+    # Check agreement for each sentence
+    for sentence in sentences:
+        if agreement_checker.check_agreement(sentence):
+            print(f"Agreement is correct in the sentence: {sentence}")
+        else:
+            print(f"Agreement is incorrect in the sentence: {sentence}")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,39 @@
+class FSA:
+    def __init__(self):
+        self.states = {'q0', 'q1', 'q2'}  # Set of states
+        self.accept_state = 'q2'  # Accepting state
+        self.transitions = {
+            'q0': {'a': 'q0', 'b': 'q1'},  # Transition function
+            'q1': {'a': 'q0', 'b': 'q2'},
+            'q2': {'a': 'q0', 'b': 'q1'}
+        }
+        self.current_state = 'q0'  # Initial state
+
+    def transition(self, input_symbol):
+        if input_symbol in self.transitions[self.current_state]:
+            self.current_state = self.transitions[self.current_state][input_symbol]
+
+    def accept(self):
+        return self.current_state == self.accept_state
+
+
+def main():
+    fsa = FSA()  # Create an instance of the FSA
+
+    # Test cases
+    test_strings = ['aaaab', 'bab', 'ab', 'aab', 'abaab']
+
+    for test_string in test_strings:
+        for symbol in test_string:
+            fsa.transition(symbol)
+        if fsa.accept():
+            print(f"'{test_string}' ends with 'ab'")
+        else:
+            print(f"'{test_string}' does not end with 'ab'")
+
+        # Reset the FSA for the next test string
+        fsa.current_state = 'q0'
+
+
+if __name__ == "__main__":
+    main()

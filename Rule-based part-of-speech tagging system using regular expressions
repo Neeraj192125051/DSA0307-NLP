@@ -1,0 +1,34 @@
+import re
+
+def rule_based_pos_tagging(text):
+    tagged_words = []
+    for word in text.split():
+        if re.match(r'^[A-Z][a-z]+$', word):  # Proper noun
+            tagged_words.append((word, 'NNP'))
+        elif re.match(r'^[A-Z]+$', word):  # Acronym
+            tagged_words.append((word, 'NNP'))
+        elif re.match(r'^[0-9]+(\.[0-9]+)?$', word):  # Number
+            tagged_words.append((word, 'CD'))
+        elif re.match(r'^[A-Za-z]+(ed|ing)$', word):  # Verb (past tense or present participle)
+            tagged_words.append((word, 'VB'))
+        elif re.match(r'^[A-Za-z]+s$', word):  # Noun (plural)
+            tagged_words.append((word, 'NNS'))
+        elif re.match(r'^[A-Za-z]+$', word):  # Noun (singular)
+            tagged_words.append((word, 'NN'))
+        else:
+            tagged_words.append((word, 'UNK'))  # Unknown
+    return tagged_words
+
+def main():
+    # Example text
+    text = "The quick brown fox jumps over the lazy dog. 10 apples are on the table."
+
+    # Perform rule-based part-of-speech tagging
+    tagged_words = rule_based_pos_tagging(text)
+
+    # Print the tagged words
+    for word, pos_tag in tagged_words:
+        print(f"{word}: {pos_tag}")
+
+if __name__ == "__main__":
+    main()

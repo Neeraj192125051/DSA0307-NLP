@@ -1,0 +1,20 @@
+class PluralFiniteStateMachine:
+    def __init__(self):
+        # Define states
+        self.states = {'Singular', 'Plural'}
+        self.current_state = 'Singular'  # Initial state
+
+    def transition(self, word):
+        # Define transitions
+        if word.endswith('s') or word.endswith('sh') or word.endswith('ch') or word.endswith('x') or word.endswith('z'):
+            self.current_state = 'Plural'
+
+    def generate_plural(self, noun):
+        # Check if the noun is already in plural form
+        if self.current_state == 'Plural':
+            return noun
+
+        # Apply pluralization rules
+        if noun.endswith('y') and not noun.endswith(('ay', 'ey', 'iy', 'oy', 'uy')):
+            return noun[:-1] + 'ies'
+        elif n

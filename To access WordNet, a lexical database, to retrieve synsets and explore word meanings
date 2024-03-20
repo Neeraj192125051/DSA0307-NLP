@@ -1,0 +1,42 @@
+from nltk.corpus import wordnet
+
+# Define a word for exploration
+word = "car"
+
+# Retrieve synsets for the word
+synsets = wordnet.synsets(word)
+
+# Print definitions and examples for each synset
+for synset in synsets:
+    print(f"Synset: {synset.name()}")
+    print(f"Definition: {synset.definition()}")
+    print(f"Examples: {synset.examples()}")
+    print()
+
+# Explore hypernyms (more general terms) of the first synset
+hypernyms = synsets[0].hypernyms()
+if hypernyms:
+    print("Hypernyms:")
+    for hypernym in hypernyms:
+        print(f"{hypernym.name()}: {hypernym.definition()}")
+
+# Explore hyponyms (more specific terms) of the first synset
+hyponyms = synsets[0].hyponyms()
+if hyponyms:
+    print("\nHyponyms:")
+    for hyponym in hyponyms:
+        print(f"{hyponym.name()}: {hyponym.definition()}")
+
+# Explore holonyms (part-whole relationships) of the first synset
+holonyms = synsets[0].part_holonyms()
+if holonyms:
+    print("\nHolonyms:")
+    for holonym in holonyms:
+        print(f"{holonym.name()}: {holonym.definition()}")
+
+# Explore meronyms (part-of relationships) of the first synset
+meronyms = synsets[0].part_meronyms()
+if meronyms:
+    print("\nMeronyms:")
+    for meronym in meronyms:
+        print(f"{meronym.name()}: {meronym.definition()}")

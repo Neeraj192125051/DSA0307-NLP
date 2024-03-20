@@ -1,0 +1,55 @@
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.tag import pos_tag
+from nltk.chunk import ne_chunk
+
+def resolve_references(text):
+    # Tokenize the text into sentences
+    sentences = sent_tokenize(text)
+    
+    resolved_text = ""
+    previous_entities = {}  # To store entities mentioned in previous sentences
+    
+    for sentence in sentences:
+        # Tokenize the sentence into words
+        words = word_tokenize(sentence)
+        
+        # Perform part-of-speech tagging
+        tagged_words = pos_tag(words)
+        
+        # Use NLTK's named entity chunker to identify named entities
+        chunked_sentence = ne_chunk(tagged_words)
+        
+        # Extract named entities from the chunked sentence
+        named_entities = []
+        for subtree in chunked_sentence:
+            if isinstance(subtree, nltk.Tree):
+                if subtree.label() == 'NE':
+                    named_entity = ' '.join(word for word, tag in subtree.leaves())
+                    named_entities.append(named_entity)
+        
+        # Resolve references in the sentence
+        resolved_sentence = sentence
+        for entity in named_entities:
+            if entity.lower() in previous_entities:
+                # Replace pronouns with the corresponding named entity
+                resolved_sentence = resolved_sentence.replace(entity.lower(), previous_entities[entity.lower()])
+        
+        # Update previous_entities dictionary with the named entities mentioned in the current sentence
+        for entity in named_entities:
+            previous_entities[entity.lower()] = entity
+        
+        resolved_text += resolved_sentence + " "
+    
+    return resolved_text
+
+# Example text with pronouns and named entities
+text = "Barack Obama was born in Hawaii. He served as the 44th president of the United States. \
+During his presidency, Obama signed many important bills into law."
+
+# Perform reference resolution
+resolved_text = resolve_references(text)
+
+# Print the resolved text
+print("Resolved Text:")
+print(resolved_text)

@@ -1,0 +1,51 @@
+import random
+
+# Example training data (word, POS tag) pairs
+training_data = [
+    ("The", "DT"),
+    ("quick", "JJ"),
+    ("brown", "JJ"),
+    ("fox", "NN"),
+    ("jumps", "VBZ"),
+    ("over", "IN"),
+    ("the", "DT"),
+    ("lazy", "JJ"),
+    ("dog", "NN"),
+]
+
+def train_probabilistic_model(training_data):
+    model = {}
+    for word, pos_tag in training_data:
+        if pos_tag in model:
+            model[pos_tag].append(word)
+        else:
+            model[pos_tag] = [word]
+    return model
+
+def stochastic_pos_tagging(model, text):
+    tokens = text.split()
+    tagged_words = []
+    for token in tokens:
+        if token in model:
+            pos_tag = random.choice(model[token])
+        else:
+            pos_tag = "UNKNOWN"
+        tagged_words.append((token, pos_tag))
+    return tagged_words
+
+def main():
+    # Example text
+    text = "The quick brown fox jumps over the lazy dog."
+
+    # Train probabilistic model using the training data
+    model = train_probabilistic_model(training_data)
+
+    # Perform stochastic part-of-speech tagging
+    tagged_words = stochastic_pos_tagging(model, text)
+
+    # Print the tagged words
+    for word, pos_tag in tagged_words:
+        print(f"{word}: {pos_tag}")
+
+if __name__ == "__main__":
+    main()

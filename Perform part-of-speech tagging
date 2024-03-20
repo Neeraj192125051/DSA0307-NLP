@@ -1,0 +1,21 @@
+import nltk
+from nltk.tokenize import word_tokenize
+
+def pos_tagging(text):
+    tokens = word_tokenize(text)  # Tokenize the text into words
+    tagged_words = nltk.pos_tag(tokens)  # Perform part-of-speech tagging
+    return tagged_words
+
+def main():
+    # Sample text
+    text = "The quick brown fox jumps over the lazy dog."
+
+    # Perform part-of-speech tagging
+    tagged_words = pos_tagging(text)
+
+    # Print the tagged words
+    for word, pos_tag in tagged_words:
+        print(f"{word}: {pos_tag}")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,47 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+
+def recognize_dialog_acts(dialog):
+    dialog_acts = []
+    for utterance in dialog:
+        # Tokenize the utterance into words
+        words = word_tokenize(utterance)
+        
+        # Perform part-of-speech tagging
+        tagged_words = pos_tag(words)
+        
+        # Extract the POS tags
+        pos_tags = [tag for word, tag in tagged_words]
+        
+        # Recognize dialog acts based on POS tags
+        dialog_act = recognize_dialog_act(pos_tags)
+        
+        dialog_acts.append(dialog_act)
+    
+    return dialog_acts
+
+def recognize_dialog_act(pos_tags):
+    # Define rules to recognize dialog acts based on POS tags
+    if 'VB' in pos_tags:
+        return 'Statement'  # If there is a verb, it's likely a statement
+    elif 'MD' in pos_tags:
+        return 'Question'  # If there is a modal verb, it's likely a question
+    else:
+        return 'Other'  # Otherwise, it's considered as 'Other'
+
+# Example dialog
+dialog = [
+    "I like to play soccer.",
+    "Do you want to join me?",
+    "Sure, I'd love to.",
+    "Great, let's meet at the park."
+]
+
+# Recognize dialog acts in the dialog
+dialog_acts = recognize_dialog_acts(dialog)
+
+# Print the recognized dialog acts
+print("Recognized Dialog Acts:")
+for i, dialog_act in enumerate(dialog_acts):
+    print(f"Utterance {i+1}: {dialog_act}")

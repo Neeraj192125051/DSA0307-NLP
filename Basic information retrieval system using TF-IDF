@@ -1,0 +1,32 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Sample documents
+documents = [
+    "The quick brown fox jumps over the lazy dog.",
+    "A quick brown dog outpaces a quick fox.",
+    "The slow brown dog cannot catch the quick fox."
+]
+
+# Create TF-IDF vectorizer
+tfidf_vectorizer = TfidfVectorizer()
+
+# Fit the vectorizer to documents and transform the documents into TF-IDF vectors
+tfidf_matrix = tfidf_vectorizer.fit_transform(documents)
+
+# Input query
+query = "The lazy fox"
+
+# Transform the query into TF-IDF vector
+query_vector = tfidf_vectorizer.transform([query])
+
+# Calculate cosine similarity between query and documents
+cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
+
+# Get document indices sorted by similarity score
+doc_indices = cosine_similarities.argsort()[0][::-1]
+
+# Print the ranked documents
+print("Ranked documents:")
+for i, idx in enumerate(doc_indices):
+    print(f"{i+1}. Document {idx+1}: {documents[idx]}")

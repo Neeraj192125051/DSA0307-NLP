@@ -1,0 +1,47 @@
+class FOPCParser:
+    def __init__(self):
+        self.tokens = []
+        self.current_token_idx = -1
+        self.current_token = None
+
+    def tokenize(self, expression):
+        # Split the expression into tokens
+        self.tokens = expression.split()
+
+    def parse(self, expression):
+        self.tokenize(expression)
+        self.current_token_idx = -1
+        self.advance()
+        return self.parse_expression()
+
+    def advance(self):
+        self.current_token_idx += 1
+        if self.current_token_idx < len(self.tokens):
+            self.current_token = self.tokens[self.current_token_idx]
+        else:
+            self.current_token = None
+
+    def parse_expression(self):
+        if self.current_token == '(':
+            self.advance()  # Consume '('
+            result = self.parse_expression()  # Parse inner expression
+            self.advance()  # Consume ')'
+            return result
+        elif self.current_token == 'not':
+            self.advance()  # Consume 'not'
+            return ('not', self.parse_expression())  # Unary operation
+        elif self.current_token in {'and', 'or', 'implies', 'iff'}:
+            op = self.current_token
+            self.advance()  # Consume operator
+            left = self.parse_expression()  # Parse left operand
+            right = self.parse_expression()  # Parse right operand
+            return (op, left, right)  # Binary operation
+        else:
+            return self.current_token  # Operand
+
+# Test the parser
+if __name__ == "__main__":
+    parser = FOPCParser()
+    expression = "(not (and P Q))"
+    parsed_expression = parser.parse(expression)
+    print("Parsed expression:", parsed_expression)

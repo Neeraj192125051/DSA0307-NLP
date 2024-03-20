@@ -1,0 +1,26 @@
+from nltk.corpus import wordnet
+from nltk.tokenize import word_tokenize
+from nltk.wsd import lesk
+
+def lesk_disambiguate(sentence, word):
+    # Tokenize the sentence
+    tokens = word_tokenize(sentence)
+    
+    # Disambiguate the word using Lesk algorithm
+    best_sense = lesk(tokens, word)
+    
+    if best_sense:
+        return best_sense.definition()
+    else:
+        return "No appropriate sense found for the word."
+
+# Example sentence and word
+sentence = "I went to the bank to deposit some money."
+word = "bank"
+
+# Perform word sense disambiguation using Lesk algorithm
+sense_definition = lesk_disambiguate(sentence, word)
+
+# Print the disambiguated sense of the word
+print(f"The most appropriate sense of '{word}' in the context is:")
+print(sense_definition)

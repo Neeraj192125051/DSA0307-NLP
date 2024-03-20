@@ -1,0 +1,64 @@
+class CFG:
+    def __init__(self, start_symbol, productions):
+        self.start_symbol = start_symbol
+        self.productions = productions
+
+    def parse(self, input_tokens):
+        self.input_tokens = input_tokens
+        self.index = 0
+        self.success = True
+        self.parse_production(self.start_symbol)
+        if self.success and self.index == len(self.input_tokens):
+            print("Parsing Successful!")
+        else:
+            print("Parsing Failed!")
+
+    def parse_production(self, symbol):
+        if self.index == len(self.input_tokens):
+            self.success = False
+            return
+        if symbol in self.productions:
+            for production in self.productions[symbol]:
+                for part in production:
+                    if isinstance(part, str):
+                        if part == self.input_tokens[self.index]:
+                            self.index += 1
+                        else:
+                            self.success = False
+                            return
+                    elif isinstance(part, tuple):
+                        self.parse_production(part[0])
+                    if not self.success:
+                        break
+                if self.success:
+                    return
+        else:
+            self.success = False
+
+def main():
+    # Define a simple CFG for arithmetic expressions
+    start_symbol = "<expr>"
+    productions = {
+        "<expr>": [("<term>", "+", "<expr>"), ("<term>",)],
+        "<term>": [("<factor>", "*", "<term>"), ("<factor>",)],
+        "<factor>": [("(", "<expr>", ")"), ("num",)],
+    }
+
+    # Create the CFG object
+    cfg = CFG(start_symbol, productions)
+
+    # Test sentences
+    sentences = [
+        ["num", "+", "num", "*", "num"],
+        ["(", "num", "+", "num", ")", "*", "num"],
+        ["num", "+", "(", "num", "*", "num", ")"]
+    ]
+
+    # Parse each sentence
+    for sentence in sentences:
+        print("Parsing:", sentence)
+        cfg.parse(sentence)
+        print()
+
+if __name__ == "__main__":
+    main()

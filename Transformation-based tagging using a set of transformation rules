@@ -1,0 +1,38 @@
+import nltk
+
+# Example transformation rules
+transformation_rules = [
+    (r'^([^ ]+) (is|was) (a|an|the) ([^ ]+)$', r'\1 \2 \3 \4', 'DT'),  # Change 'a/an/the' to 'DT'
+    (r'^(a|an|the) ([^ ]+) (is|was) ([^ ]+)$', r'\1 \2 \3 \4', 'DT'),  # Change 'a/an/the' to 'DT'
+    (r'^([^ ]+) (are|were) ([^ ]+) (by|in|on|at|to) ([^ ]+)$', r'\1 \2 \3 \4 \5', 'VB'),  # Change 'are/were by/in/on/at/to' to 'VB'
+]
+
+def transform_based_tagging(sentence, rules):
+    words = nltk.word_tokenize(sentence)
+    tagged_words = nltk.pos_tag(words)
+
+    for rule_pattern, replacement, new_tag in rules:
+        regex = nltk.RegexpParser(rule_pattern)
+        for i in range(len(tagged_words)):
+            for subtree in regex.parse(tagged_words).subtrees():
+                if subtree.label() == 'NP':
+                    words_in_subtree = [word for word, _ in subtree.leaves()]
+                    if ' '.join(words_in_subtree) == tagged_words[i][0]:
+                        tagged_words[i] = (replacement, new_tag)
+                        break
+
+    return tagged_words
+
+def main():
+    # Example sentence
+    sentence = "The cat is on the mat."
+
+    # Apply transformation-based tagging
+    tagged_sentence = transform_based_tagging(sentence, transformation_rules)
+
+    # Print the tagged sentence
+    print("Transformed Sentence:")
+    print(tagged_sentence)
+
+if __name__ == "__main__":
+    main()

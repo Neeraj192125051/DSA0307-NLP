@@ -1,0 +1,40 @@
+import re
+
+def main():
+    # Sample text
+    text = """
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+    Fusce vitae turpis vel justo aliquet consequat. 
+    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
+    Integer ultrices ligula eget odio convallis, ut dignissim lacus varius. 
+    """
+
+    # Define a regular expression pattern
+    pattern = r'\b\w{5,}\b'  # Match words with 5 or more characters
+
+    # Search for the pattern in the text
+    matches = re.findall(pattern, text)
+
+    # Print the matches
+    print("Words with 5 or more characters:")
+    for match in matches:
+        print(match)
+
+    # Using search to find the first occurrence of a pattern
+    search_result = re.search(r'consectetur', text)
+    if search_result:
+        print("\nFound 'consectetur' at index:", search_result.start())
+
+    # Using match to match patterns at the beginning of the text
+    match_result = re.match(r'Lorem', text)
+    if match_result:
+        print("\n'Lorem' is found at the beginning of the text.")
+
+    # Using sub to replace occurrences of a pattern
+    new_text = re.sub(r'turpis', '***REPLACED***', text)
+    print("\nText with 'turpis' replaced:")
+    print(new_text)
+
+
+if __name__ == "__main__":
+    main()
